@@ -1154,8 +1154,9 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/bleplugin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.comoc.bleplugin;
+				PRODUCT_BUNDLE_IDENTIFIER = io.toio.unity.bleplugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -1167,8 +1168,9 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/bleplugin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = com.github.comoc.bleplugin;
+				PRODUCT_BUNDLE_IDENTIFIER = io.toio.unity.bleplugin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
