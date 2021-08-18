@@ -1,0 +1,17 @@
+{
+    "name": "io.toio.unity.bleplugin",
+    "displayName": "ble-plugin-unity",
+    "author": {
+        "name": "Sony Interactive Entertainment Inc."
+    },
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "description": "Bluetooth® Low Energy plugin for Unity",
+    "keywords": [
+        "ble",
+        "bluetooth low energy"
+    ],
+    "license": "MIT",
+    "category": "Task",
+    "dependencies": {}
+}
