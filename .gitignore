@@ -71,5 +71,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 #Windows Plugin builds
-bleplugin_projects/x64
-bleplugin_projects/BlePluginWin/x64
+bleplugin_projects/Windows/x64
+bleplugin_projects/Windows/BlePluginWin/x64
