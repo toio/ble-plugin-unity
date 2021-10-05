@@ -31,7 +31,6 @@ void BleDeviceObject::Disconnect() {
 	m_device.Close();
 
 	m_device = WinRtBleDevice(nullptr);
-	OnDisconnect();
 }
 
 void BleDeviceObject::Update() {
