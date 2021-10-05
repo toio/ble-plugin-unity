@@ -5,7 +5,7 @@
 namespace BlePlugin {
 	class NotificateData {
 	public:
-		// è„å¿ÇÕ 22byteÅc
+		// ‰∏äÈôê„ÅØ 22byte‚Ä¶
 		static const int MaxDataSize = 22;
 	private:
 		WinRtGuid service;
@@ -124,6 +124,6 @@ namespace BlePlugin {
 
 		void UpdateNotification();
 		void UpdateDisconectCheck();
-		void OnDisconnect();
+		void ClearDeviceInfo();
 	};
 }

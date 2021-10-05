@@ -28,9 +28,10 @@ void BleDeviceObject::Disconnect() {
 	for (auto it = m_services.begin(); it != m_services.end(); ++it) {
 		it->Close();
 	}
-	m_device.Close();
-
-	m_device = WinRtBleDevice(nullptr);
+    if (m_device != nullptr) {
+        m_device.Close();
+    }
+    this->ClearDeviceInfo();
 }
 
 void BleDeviceObject::Update() {
@@ -225,11 +226,11 @@ void BleDeviceObject::UpdateDisconectCheck() {
 		return;
 	}
 	if( this->m_device.ConnectionStatus() != WinRtBleConnectStatus::Connected){
-		OnDisconnect();
-	}
+		ClearDeviceInfo();
+        this->m_connectState = EConnectState::None;
+    }
 }
-void BleDeviceObject::OnDisconnect() {
-	this->m_connectState = EConnectState::None;
+void BleDeviceObject::ClearDeviceInfo() {
 	m_services.clear();
 	m_charastrictics.clear();
 
@@ -241,4 +242,5 @@ void BleDeviceObject::OnDisconnect() {
 	m_NotificateBuffer.clear();
 	m_NotificateResult.clear();
 
+    m_device = WinRtBleDevice(nullptr);
 }

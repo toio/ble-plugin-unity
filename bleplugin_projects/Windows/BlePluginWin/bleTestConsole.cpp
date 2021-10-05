@@ -1,4 +1,4 @@
-﻿#if defined(_DEBUG)
+#if defined(_DEBUG)
 #include "pch.h"
 #include <windows.h>
 #include "Utility.h"
@@ -80,7 +80,7 @@ void TestRun(){
         }
     }
     ButtonSetSubscrive(addr);
-    for (int i = 0; i < 50; ++i) {
+    for (int i = 0; i < 10; ++i) {
         _BlePluginUpdateDevicdeManger();
         int deviceNum = _BlePluginGetConectDeviceNum();
         std::cout << "ButtonCheck " << deviceNum << std::endl;
@@ -98,7 +98,9 @@ int main()
 {
     while (true) {
         TestRun();
+        _BlePluginDisconnectAllDevice();
         _BlePluginFinalize();
+        Sleep(3000);
     }
 }
 #endif
