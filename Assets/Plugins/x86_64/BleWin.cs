@@ -151,7 +151,7 @@ namespace toio.Windows
             string serviceUUID, string characteristicUUID,
             Action<string, string, byte[]> notifiedCharacteristicAction)
         {
-            Debug.Log("SubscribeCharacteristic " + identifier + ":" + serviceUUID + ":" + characteristicUUID);
+            //Debug.Log("SubscribeCharacteristic " + identifier + ":" + serviceUUID + ":" + characteristicUUID);
             var addr = DeviceAddressDatabase.GetAddressValue(identifier);
             var serviceHandle = UuidDatabase.GetUuid(serviceUUID);
             var characteristicHandle = UuidDatabase.GetUuid(characteristicUUID);
@@ -165,8 +165,8 @@ namespace toio.Windows
             string serviceUUID, string characteristicUUID,
             Action<string> action)
         {
-
-            Debug.Log("UnSubscribeCharacteristic " + identifier + ":" + serviceUUID + ":" + characteristicUUID); var addr = DeviceAddressDatabase.GetAddressValue(identifier);
+            //Debug.Log("UnSubscribeCharacteristic " + identifier + ":" + serviceUUID + ":" + characteristicUUID); 
+            var addr = DeviceAddressDatabase.GetAddressValue(identifier);
             var serviceHandle = UuidDatabase.GetUuid(serviceUUID);
             var characteristicHandle = UuidDatabase.GetUuid(characteristicUUID);
             var charastricsItem = new BleCharastericsKeyInfo(identifier, serviceUUID, characteristicUUID);
