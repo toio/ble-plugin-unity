@@ -1,5 +1,5 @@
 #pragma once
-//@https://blog.okazuki.jp/entry/2018/10/16/144556
+//ã€€https://blog.okazuki.jp/entry/2018/10/16/144556
 
 /* workaround */
 #define USE_WORKAROUND 1
@@ -22,11 +22,13 @@ namespace winrt::impl
 
 #include <iostream>
 
-// namespace’·‚¢‚Ì‚ÅÈ—ªŒ^‚ğ—pˆÓ‚µ‚Ü‚·
+// namespaceé•·ã„ã®ã§çœç•¥å‹ã‚’ç”¨æ„ã—ã¾ã™
 
 namespace BlePlugin {
     using WinRtGuid = winrt::guid;
     using WinRtBleAdvertiseWatcher = winrt::Windows::Devices::Bluetooth::Advertisement::BluetoothLEAdvertisementWatcher;
+    using WinRtBleScanMode = winrt::Windows::Devices::Bluetooth::Advertisement::BluetoothLEScanningMode;
+
     using WinRtBleDevice = winrt::Windows::Devices::Bluetooth::BluetoothLEDevice;
     using WinRtBleAdvertiseRecieveEventArg = winrt::Windows::Devices::Bluetooth::Advertisement::BluetoothLEAdvertisementReceivedEventArgs;
     using WinRtBleAdvertiseFilter = winrt::Windows::Devices::Bluetooth::Advertisement::BluetoothLEAdvertisementFilter;

@@ -100,7 +100,7 @@ int main()
         TestRun();
         _BlePluginDisconnectAllDevice();
         _BlePluginFinalize();
-        Sleep(3000);
+        Sleep(300);
     }
 }
 #endif

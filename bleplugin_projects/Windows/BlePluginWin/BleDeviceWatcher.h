@@ -10,7 +10,7 @@ namespace BlePlugin {
 	class BleDeviceWatcher {
 	private:
 
-		// デバイス情報
+		// 繝�繝舌う繧ｹ諠�蝣ｱ
 		struct DeviceInfo {
 			static const int TimeoutSec = 1500;
 //			std::string name;
@@ -32,6 +32,8 @@ namespace BlePlugin {
 			inline bool IsTimeout(clock_t current)const {
 				return ((current - this->lastFound) >= TimeoutSec);
 			}
+
+            void Update(int _rssi);
 
 		};
 		// member

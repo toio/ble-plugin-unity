@@ -22,6 +22,8 @@ BleDeviceWatcher::DeviceInfo::DeviceInfo(const BleDeviceWatcher::DeviceInfo& src
 }
 
 
+
+
 const BleDeviceWatcher::DeviceInfo &
 	BleDeviceWatcher::DeviceInfo::operator= (const BleDeviceWatcher::DeviceInfo &src)
 {
@@ -33,8 +35,14 @@ const BleDeviceWatcher::DeviceInfo &
 }
 
 
+void BleDeviceWatcher::DeviceInfo::Update(int _rssi) {
+    lastFound = clock();
+    this->rssi = _rssi;
+}
 
-//�@BleWatcher
+
+
+//　BleWatcher
 BleDeviceWatcher& BleDeviceWatcher::GetInstance() {
 	return s_instance;
 }
@@ -53,8 +61,15 @@ void BleDeviceWatcher::AddServiceUUID(uint32_t d1, uint32_t d2, uint32_t d3, uin
 }
 
 void BleDeviceWatcher::Start() {
-	m_watcher.Received(BleDeviceWatcher::ReceiveCallBack);
-	m_watcher.AdvertisementFilter(m_filer);
+
+    //　TODO
+    // https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.advertisement.bluetoothlescanningmode?view=winrt-22000
+    // Activeスキャンすれば、ScanResponseとかでデータが取れるはずですが…
+    // Filterを設定していると、ScanResponseがフィルターされて来ませんでした。
+    // ※nameとManufactureData対応をチャントやるとしたら自前で ServiceのUUIDでフィルターしないといけなさそうです…
+    m_watcher.AdvertisementFilter(m_filer);
+    m_watcher.ScanningMode(WinRtBleScanMode::Passive);
+    m_watcher.Received(BleDeviceWatcher::ReceiveCallBack);
 	m_watcher.Start();
 }
 void BleDeviceWatcher::Stop() {
@@ -83,7 +98,7 @@ const char* BleDeviceWatcher::GetName(int idx)const {
 	if (idx < 0 || idx >= m_cacheData.size()) {
 		return nullptr;
 	}
-	return "";// m_cacheData.at(idx).name.c_str();
+    return "";// m_cacheData.at(idx).name.c_str();
 }
 uint64_t BleDeviceWatcher::GetAddr(int idx)const {
 	if (idx < 0 || idx >= m_cacheData.size()) {
@@ -123,20 +138,34 @@ void BleDeviceWatcher::OnReceive(
 	uint64_t addr = args.BluetoothAddress();
 	auto advertisement = args.Advertisement();
 
-	/* todo name And ManufactureData
+
+#if false
+    auto advertiseType = args.AdvertisementType();
+    // toioだと、ConnectableUndirectedでは・・・
+    // Advertiseのセクション 0x01と 0x07が来るが・・・ほかが来ない…
+    // ScanResponseでNameとManufactureDataが返ってきました。
+    // ScanFilterをしないといけない
 	int dataSectionNum = advertisement.DataSections().Size();
 	for (int i = 0; i < dataSectionNum; ++i) {
 		auto dataSection = advertisement.DataSections().GetAt(i);
 		uint8_t dataType = dataSection.DataType();
-		int sectionLength = dataSection.Data().Length();
+        uint8_t* dataBody = dataSection.Data().data();
+        int sectionLength = dataSection.Data().Length();
 	}
+    // name And ManufactureData
+    // toioでは ScanResponseで入ってくるデータ
 	int manufactureSize = advertisement.ManufacturerData().Size();
-	*/
+	auto name = advertisement.LocalName().c_str();
+    int nameSize = advertisement.LocalName().size();
+#endif
 
-//	auto name = advertisement.LocalName().c_str();
-	const char* name = "";
-	int nameSize = advertisement.LocalName().size();
-	DeviceInfo deviceInfo( name, addr, rssi);
-	m_DeviceMap[addr] = deviceInfo;
+    auto findIt = m_DeviceMap.find(addr);
+    if (findIt == m_DeviceMap.end()) {
+        DeviceInfo deviceInfo("", addr, rssi);
+        m_DeviceMap.emplace(addr, deviceInfo);
+    }
+    else {
+        findIt->second.Update(rssi);
+    }
 }
 
