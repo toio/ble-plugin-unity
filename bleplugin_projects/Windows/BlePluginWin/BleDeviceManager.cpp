@@ -53,6 +53,14 @@ void BleDeviceManager::DisconnectAll() {
 void BleDeviceManager::ResetAll() {
 	this->DisconnectAll();
 	m_connectDevices.clear();
+    // clear all device memory
+    for (auto it = m_devices.begin(); it != m_devices.end(); ++it) {
+        BleDeviceObject* devicePtr = (*it);
+        if (devicePtr == nullptr) {
+            continue;
+        }
+        delete devicePtr;
+    }
 	m_devices.clear();
 }
 

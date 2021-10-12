@@ -110,13 +110,6 @@ void BleDeviceObject::SetupGattServices(const WinRtBleGattServiceResult& result)
 	int size = services.Size();
 	for (int i = 0; i < size; ++i) {
 		m_services.push_back( services.GetAt(i) );
-		// Debug code
-		/*
-		auto uuid = services.GetAt(i).Uuid();
-		std::cout << "ServiceId:";
-		Utility::DebugGuid(uuid);
-		std::cout << std::endl;
-		*/
 	}
 
 	this->m_charastricsRequests.clear();
@@ -131,8 +124,6 @@ void BleDeviceObject::SetupGattServices(const WinRtBleGattServiceResult& result)
 
 WinRtBleCharacteristic* BleDeviceObject::GetCharastric(const WinRtGuid& serviceUuid, const WinRtGuid& charastricsUuid) {
 	for (auto it = m_charastrictics.begin();it != m_charastrictics.end(); ++it) {
-		auto hoge = it->ReadValueAsync();
-		auto val = hoge.get().Value();
 		if (it->Uuid() == charastricsUuid &&
 			it->Service().Uuid() == serviceUuid) {
 			return &*it;
