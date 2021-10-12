@@ -9,7 +9,11 @@ extern "C" {
 	typedef void* WriteRequestHandle;
 	typedef void* ReadRequestHandle;
 
-	DllExport void _BlePluginFinalize();
+    DllExport void _BlePluginBleAdapterStatusRequest();
+    DllExport int _BlePluginBleAdapterUpdate();
+
+
+    DllExport void _BlePluginFinalize();
 
 
 	DllExport UuidHandle _BlePluginGetOrCreateUuidObject(uint32_t d1, uint32_t d2, uint32_t d3, uint32_t d4);

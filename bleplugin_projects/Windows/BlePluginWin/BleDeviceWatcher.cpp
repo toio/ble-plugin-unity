@@ -70,10 +70,11 @@ void BleDeviceWatcher::Start() {
     m_watcher.AdvertisementFilter(m_filer);
     m_watcher.ScanningMode(WinRtBleScanMode::Passive);
     m_watcher.Received(BleDeviceWatcher::ReceiveCallBack);
-	m_watcher.Start();
+    m_watcher.Start();
+
 }
 void BleDeviceWatcher::Stop() {
-	m_watcher.Stop();
+    m_watcher.Stop();
 }
 
 void BleDeviceWatcher::UpdateCache() {

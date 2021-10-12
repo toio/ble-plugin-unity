@@ -96,6 +96,20 @@ void TestRun(){
 
 int main()
 {
+    // init
+    _BlePluginBleAdapterStatusRequest();
+
+    int adapterStatus;
+    while (true) {
+        adapterStatus = _BlePluginBleAdapterUpdate();
+        if (adapterStatus >= 0) {
+            break;
+        }
+    }
+    if (adapterStatus != 0) {
+        std::cout << "Bluetooth adapter Error " << adapterStatus << std::endl;
+        return 0;
+    }
     while (true) {
         TestRun();
         _BlePluginDisconnectAllDevice();

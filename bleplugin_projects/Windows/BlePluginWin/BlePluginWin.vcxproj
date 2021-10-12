@@ -124,6 +124,7 @@
     <ClCompile Include="BleDeviceObject.cpp" />
     <ClCompile Include="bleTestConsole.cpp" />
     <ClCompile Include="BleDeviceWatcher.cpp" />
+    <ClCompile Include="BluetoothAdapterChecker.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -134,6 +135,7 @@
     <ClInclude Include="BleDeviceManager.h" />
     <ClInclude Include="BleDeviceObject.h" />
     <ClInclude Include="BleDeviceWatcher.h" />
+    <ClInclude Include="BluetoothAdapterChecker.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="UnityInterface.h" />
     <ClInclude Include="Utility.h" />

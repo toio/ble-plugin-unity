@@ -67,8 +67,31 @@ namespace toio.Windows
 
     public class DllInterface
     {
-
         const string pluginName = "BlePluginWinows";
+
+        public enum EBluetoothStatus : int
+        {
+            None = -1,
+            Fine = 0,
+            NotSupportBle = 1,
+            BluetoothDisable = 2,
+            UnknownError = 99
+        };
+
+        [DllImport(pluginName)]
+        private static extern void _BlePluginBleAdapterStatusRequest();
+        public static void BleAdapterStatusRequest() {
+            _BlePluginBleAdapterStatusRequest();
+        }
+
+        [DllImport(pluginName)]
+        private static extern int _BlePluginBleAdapterUpdate();
+        public static EBluetoothStatus BleAdapterUpdate()
+        {
+            int val = _BlePluginBleAdapterUpdate();
+            EBluetoothStatus status = (EBluetoothStatus)val;
+            return status;
+        }
 
         [DllImport(pluginName)]
         private static extern void _BlePluginFinalize();

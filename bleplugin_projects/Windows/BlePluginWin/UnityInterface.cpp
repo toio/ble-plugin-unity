@@ -2,6 +2,7 @@
 #include "BleDeviceObject.h"
 #include "BleDeviceWatcher.h"
 #include "BleDeviceManager.h"
+#include "BluetoothAdapterChecker.h"
 #include "UUidManager.h"
 #include "Utility.h"
 #include <windows.h>
@@ -27,6 +28,15 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	return TRUE;
 }
 
+DllExport void _BlePluginBleAdapterStatusRequest() {
+    BluetoothAdapterChecker &checker = BluetoothAdapterChecker::GetInstance();
+    checker.Request();
+}
+DllExport int _BlePluginBleAdapterUpdate() {
+    BluetoothAdapterChecker& checker = BluetoothAdapterChecker::GetInstance();
+    checker.Update();
+    return static_cast<int>( checker.GetStatus() );
+}
 
 DllExport void _BlePluginFinalize() {
 	BleDeviceWatcher& watcher = BleDeviceWatcher::GetInstance();

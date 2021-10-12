@@ -18,6 +18,7 @@ namespace winrt::impl
 #include "winrt/Windows.Devices.Bluetooth.h"
 #include "winrt/Windows.Devices.Bluetooth.GenericAttributeProfile.h"
 #include "winrt/Windows.Devices.Bluetooth.Advertisement.h"
+#include "winrt/Windows.Devices.Radios.h"
 #include <winrt/Windows.Storage.Streams.h>
 
 #include <iostream>
@@ -50,5 +51,8 @@ namespace BlePlugin {
     using WinRtBleConnectStatus = winrt::Windows::Devices::Bluetooth::BluetoothConnectionStatus;
 
     using WinRtCharacteristicConfigValue = winrt::Windows::Devices::Bluetooth::GenericAttributeProfile::GattClientCharacteristicConfigurationDescriptorValue;
+
+    using WinRtBluetoothAdapter = winrt::Windows::Devices::Bluetooth::BluetoothAdapter;
+    using WinRtRadio = winrt::Windows::Devices::Radios::Radio;
 }
 

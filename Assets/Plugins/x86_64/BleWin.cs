@@ -7,6 +7,7 @@ using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Collections;
 using toio.Windows.Data;
 
 namespace toio.Windows
@@ -24,6 +25,8 @@ namespace toio.Windows
         private static List<int> s_removeIdxBuffer = new List<int>();
         private static List<string> s_removeKeyBuffer = new List<string>();
 
+        private static bool s_isInitialized = false;
+
         public static void Initialize(Action initializedAction, Action<string> errorAction = null)
         {
             // clear data
@@ -32,16 +35,51 @@ namespace toio.Windows
             s_writeRequests.Clear();
             s_readRequests.Clear();
             s_notifyEvents.Clear();
+            s_isInitialized = false;
 
-            BehaviourProxy.Create(OnUpdate);
-            if (initializedAction != null)
+            BehaviourProxy.Create(InitAction(initializedAction,errorAction),OnUpdate);
+        }
+        private static IEnumerator InitAction(Action initializedAction, Action<string> errorAction)
+        {
+            DllInterface.BleAdapterStatusRequest();
+            DllInterface.EBluetoothStatus stat = DllInterface.EBluetoothStatus.None;
+
+            while (stat == DllInterface.EBluetoothStatus.None)
             {
-                initializedAction();
+                stat = DllInterface.BleAdapterUpdate();
+                yield return null;
+            }
+            switch (stat)
+            {
+                case DllInterface.EBluetoothStatus.Fine:
+                    s_isInitialized = true;
+                    if (initializedAction != null){
+                        initializedAction.Invoke();
+                    }
+                    break;
+                case DllInterface.EBluetoothStatus.NotSupportBle:
+                    if (errorAction != null){
+                        errorAction.Invoke("Bluetooth Adapter not Support BLE Central.");
+                    }
+                    break;
+                case DllInterface.EBluetoothStatus.BluetoothDisable:
+                    if (errorAction != null)
+                    {
+                        errorAction.Invoke("Bluetooth Adapter isn't enabled.");
+                    }
+                    break;
+                default:
+                    if (errorAction != null)
+                    {
+                        errorAction.Invoke("UnknonwError");
+                    }
+                    break;
             }
         }
 
         public static void Finalize(Action finalizedAction = null)
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("Finalize");
             DllInterface.FinalizePlugin();
             if(finalizedAction != null) { finalizedAction(); }
@@ -54,6 +92,7 @@ namespace toio.Windows
         public static void StartScan(string[] serviceUUIDs, 
             Action<string, string, int, byte[]> discoveredAction = null)
         {
+            if (!s_isInitialized) { return; }
             s_discoverAction = discoveredAction;
             DllInterface.ClearScanFilter();
             if (serviceUUIDs != null)
@@ -69,6 +108,7 @@ namespace toio.Windows
 
         public static void StopScan()
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("StopScan " );
             DllInterface.StopScan();
         }
@@ -79,6 +119,7 @@ namespace toio.Windows
             Action<string, string, string> discoveredCharacteristicAction = null,
             Action<string> disconnectedPeripheralAction = null)
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("Connect to peripheral " + identifier);
             if (s_deviceDiscoverEvents.ContainsKey(identifier))
             {
@@ -97,6 +138,7 @@ namespace toio.Windows
         public static void DisconnectPeripheral(string identifier, 
             Action<string> disconnectedPeripheralAction = null)
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("DisconnectPeripheral " + identifier);
 
             var addr = DeviceAddressDatabase.GetAddressValue(identifier);
@@ -105,6 +147,7 @@ namespace toio.Windows
 
         public static void DisconnectAllPeripherals()
         {
+            if (!s_isInitialized) { return; }
             DllInterface.DisconnectAllDevice();
         }
 
@@ -113,6 +156,7 @@ namespace toio.Windows
             string characteristicUUID,
             Action<string, string, byte[]> didReadChracteristicAction)
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("ReadCharacteristic " + identifier);
             var addr = DeviceAddressDatabase.GetAddressValue(identifier);
             var serviceHandle = UuidDatabase.GetUuid(serviceUUID);
@@ -129,6 +173,7 @@ namespace toio.Windows
             byte[] data, int length, bool withResponse,
             Action<string, string> didWriteCharacteristicAction)
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("WriteCharacteristic " + identifier);
             var addr = DeviceAddressDatabase.GetAddressValue(identifier);
 
@@ -165,6 +210,7 @@ namespace toio.Windows
             string serviceUUID, string characteristicUUID,
             Action<string> action)
         {
+            if (!s_isInitialized) { return; }
             //Debug.Log("UnSubscribeCharacteristic " + identifier + ":" + serviceUUID + ":" + characteristicUUID); 
             var addr = DeviceAddressDatabase.GetAddressValue(identifier);
             var serviceHandle = UuidDatabase.GetUuid(serviceUUID);
@@ -176,6 +222,7 @@ namespace toio.Windows
 
         private static void OnUpdate()
         {
+            if (!s_isInitialized) { return; }
             DllInterface.UpdateFromMainThread();
             UpdateScanDeviceEvents();
             UpdateDeviceConnectEvents();
@@ -187,6 +234,7 @@ namespace toio.Windows
 
         private static void UpdateScanDeviceEvents()
         {
+            if (!s_isInitialized) { return; }
             // update scan devices
             int scanNum = DllInterface.ScanGetDeviceLength();
             // Debug.Log("UpdateScanDeviceEvents " + scanNum);
@@ -208,6 +256,7 @@ namespace toio.Windows
 
         private static void UpdateDeviceConnectEvents()
         {
+            if (!s_isInitialized) { return; }
             s_allreadyCallServiceBuffer.Clear();
             // update connect Event
             int deviceNum = DllInterface.GetConnectDeviceNum();
@@ -259,6 +308,7 @@ namespace toio.Windows
 
         private static void UpdateWriteRequests()
         {
+            if (!s_isInitialized) { return; }
             s_removeIdxBuffer.Clear();
             int count = s_writeRequests.Count;
             for ( int i = 0; i < count; ++i)
@@ -288,6 +338,7 @@ namespace toio.Windows
         }
         private static void UpdateReadRequests()
         {
+            if (!s_isInitialized) { return; }
             s_removeIdxBuffer.Clear();
             int count = s_readRequests.Count;
             for (int i = 0; i < count; ++i)
@@ -321,6 +372,7 @@ namespace toio.Windows
         
         private static void UpdateNotification()
         {
+            if (!s_isInitialized) { return; }
             int deviceNum = DllInterface.GetConnectDeviceNum();
             for(int i = 0; i < deviceNum; ++i)
             {
@@ -352,6 +404,7 @@ namespace toio.Windows
 
         private static void UpdateDisconnectedDevice()
         {
+            if (!s_isInitialized) { return; }
             s_removeKeyBuffer.Clear();
             foreach (var kvs in s_deviceDiscoverEvents)
             {
