@@ -64,7 +64,7 @@ public class BleClientManager : NSObject {
 
     // Constants
     static let cccdUUID = CBUUID(string: "2902")
-    
+
     // MARK: Lifecycle -------------------------------------------------------------------------------------------------
 
     @objc
@@ -392,11 +392,13 @@ public class BleClientManager : NSObject {
                                         timeout: Int?,
                                         promise: SafePromise) {
 
+        var peripheral: Peripheral? = nil
         var connectionObservable = manager.retrievePeripherals(withIdentifiers: [deviceId])
             .flatMap { devices -> Observable<Peripheral> in
                 guard let device = devices.first else {
                     return Observable.error(BleError.peripheralNotFound(deviceId.uuidString))
                 }
+                peripheral = device
                 return Observable.just(device)
             }
             .flatMap { $0.connect() }
@@ -405,25 +407,22 @@ public class BleClientManager : NSObject {
             connectionObservable = connectionObservable.timeout(Double(timeout) / 1000.0, scheduler: ConcurrentDispatchQueueScheduler(queue: queue))
         }
 
-        var peripheralToConnect : Peripheral? = nil
         let connectionDisposable = connectionObservable
             .do(onSubscribe: { [weak self] in
                 self?.dispatchEvent(BleEvent.connectingEvent, value: deviceId.uuidString)
             })
             .subscribe(
                 onNext: { [weak self] peripheral in
-                    // When device is connected we save it in dectionary and clear all old cached values.
-                    peripheralToConnect = peripheral
+                    // When device is connected we save it in dictionary and clear all old cached values.
                     self?.connectedPeripherals[deviceId] = peripheral
                     self?.clearCacheForPeripheral(peripheral: peripheral)
                     self?.dispatchEvent(BleEvent.connectedEvent, value: deviceId.uuidString)
                 },
                 onError: {  [weak self] error in
-                    if let rxerror = error as? RxError,
-                       let peripheralToConnect = peripheralToConnect,
-                       let strongSelf = self,
-                       case RxError.timeout = rxerror {
-                        _ = strongSelf.manager.cancelPeripheralConnection(peripheralToConnect).subscribe()
+                    if let peripheral = peripheral {
+                        self?.onPeripheralDisconnected(peripheral)
+                    } else {
+                        self?.dispatchEvent(BleEvent.disconnectionEvent, value: [NSNull(), ["id": deviceId.uuidString]])
                     }
                     error.bleError.callReject(promise)
                 },
@@ -504,7 +503,7 @@ public class BleClientManager : NSObject {
 
     // Mark: Discovery -------------------------------------------------------------------------------------------------
 
-    // After connection for peripheral to be usable, 
+    // After connection for peripheral to be usable,
     // user should discover all services and characteristics for peripheral.
     @objc
     public func discoverAllServicesAndCharacteristicsForDevice(_ deviceIdentifier: String,
