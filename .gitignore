@@ -69,3 +69,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+#Windows Plugin builds
+bleplugin_projects/Windows/x64
+bleplugin_projects/Windows/BlePluginWin/x64
